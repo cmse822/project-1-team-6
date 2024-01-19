@@ -34,7 +34,12 @@ Then, as a group, compute the arithmetic intensities of the following kernels in
 ```
 
 Included a table in your project report listing the arithmetic intensities for these kernels.
-
+|Kernel|Operations|Memory access|Arithmetic Intensity|
+|------|----------|-------------|--------------------|
+|Y[j]+=Y[j]+A[j][i]*B[i]|3|4|3/4(8)bytes|
+|s+=A[i]*A[i]|2|2|1/8bytes|
+|s+=A[i]*B[i]|2|3|2/3(8)bytes|
+|Y[i]=A[i]+C*B[i]|2|3|2/3(8) bytes|
 ## Part 1: Matrix-matrix Multiplication
 
 In this first part of the project, you will test the performance of the basic matrix-matrix multiplication operation as a function of matrix size on multiple compute platforms. Complete the following using at least two different compute architectures (e.g., your laptop and HPCC, or two different node architectures on HPCC).
