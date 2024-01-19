@@ -65,3 +65,4 @@ In this part, you will explore the roofline model for analyzing the interplay be
 6. Compare your results for the roofline model to what you obtained for the matrix-matrix multiplication operation from Part 1. How are the rooflines of memory bandwidth related to the features in the algorithmic performance as a function of matrix size?
 
 To your project write-up, add your plots of the roofline model for the systems you tested, and responses addressing the above questions. 
+
