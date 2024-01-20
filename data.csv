@@ -1,0 +1,4 @@
+matrix_size,peak_performance,achieved_performance
+64, 12, 2
+128, 12, 4
+256, 12, 6
