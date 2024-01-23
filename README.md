@@ -40,10 +40,10 @@ Group 6 warm-up results are in the table below:
 
 |Kernel|Operations|Memory access|Arithmetic Intensity|
 |------|----------|-------------|--------------------|
-|Y[j]+=Y[j]+A[j][i]*B[i]|3|4|3/4(8)bytes|
-|s+=A[i]*A[i]|2|2|1/8bytes|
-|s+=A[i]*B[i]|2|3|2/3(8)bytes|
-|Y[i]=A[i]+C*B[i]|2|3|2/3(8) bytes|
+|Y[j]+=Y[j]+A[j][i]*B[i]|3|4|3/4(8)bytes = 3/32 FLOPs/byte|
+|s+=A[i]*A[i]|2|1|2/1(8)bytes = 1/4 FLOPs/byte|
+|s+=A[i]*B[i]|2|2|2/2(8)bytes = 1/8 FLOPs/byte|
+|Y[i]=A[i]+C*B[i]|2|3|2/3(8) bytes = 1/12 FLOPS/byte|
 
 ## Part 1: Matrix-matrix Multiplication
 
@@ -73,8 +73,12 @@ In this first part of the project, you will test the performance of the basic ma
 
       | Name   | Processor          | L1 Instruction Cache | L1 Data Cache | L2 Cache | L3 Cache | Clock Speed | Cores | FPU (Assume 1) | Theoretical Peak Performance | Hardware Source |
       |--------|--------------------|-----------------------|---------------|----------|----------|-------------|-------|----------------|-------------------------------|-----------------|
-      | Chris Laptop  | 11th Gen i7-1185G7 | 48 KB per core        | 32 KB per core | 256 KB per core | 12 MB shared | 3.00 GHz    | 4     | 1              | **12 GFLOPS** | [Source](https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-1185G7+%40+3.00GHz&id=3793) |
+      | Chris Laptop  | 11th Gen i7-1185G7 | 48 KB per core        | 32 KB per core | 1280 KB per core | 12 MB shared | 3.00 GHz    | 4     | 1              | **12 GFLOPS** | [Source](https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-1185G7+%40+3.00GHz&id=3793) |
       | HPCC dev-amd20  | AMD EPYC 7H12 64-Core Processor | 32 KB per core        | 32 KB per core | 512 KB per core | 256 MB shared | 2.60 GHz    | 64     | 1              | **166.4 GFLOPS** | [Source](https://www.amd.com/en/products/cpu/amd-epyc-7h12) |
+
+    For the laptop, the theoretical peak peformance was much higher then the performance measured in question 3. We believe this is because of the other processes running on the laptop that are also taking up a lot of the processors utilization and limiting the performance potential.
+
+    For HPCC, the theoretical peak performance was also much higher then the performance in question 3. Again, this could be because of the other processes running on the system, taking up some resources.
 
 5. Now repeat the performance measurement for a range of matrix size `N` from 1 to 10,000,000. Make a plot of the resulting measured Gflop/s vs. `N`. On this plot place a horizontal line representing the theoretical peak performance based upon your system's clock speed.
 
@@ -90,7 +94,9 @@ In this first part of the project, you will test the performance of the basic ma
 
 6. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
 
-      The measured performance is far off from the peak performance. The peak of the achieved performance is close to 4 Gflop/s, which is roughly 1/3 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off later when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this negative slope happen later when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache.
+      The measured performance is far off from the peak performance. The peak of the achieved performance is close to 4 Gflop/s, which is roughly 1/3 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off at around 200 matrix size when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this big drop off around 400 when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache. Finally, the final drop occurs around 900 when the L3 cache size is reached and it needs to go out to DRAM.
+
+      The features are similar to that in the HPCC architecture, where the performance is best in the beginning with smaller matrix sizes, but continues to degrade overtime as each level of the cache sizes fill up.
 
 To your project git repo, commit your code for performing the matrix-matrix multiply performance measurements, the plots of your results, and a brief write-up (in plain text or markdown) addressing the above questions and discussing your results. Pay particular attention to the comparison between different architectures and give explanations for them.
 

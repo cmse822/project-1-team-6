@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <random>
 #include <fstream>
+#include <algorithm>
+
 // #include <iomanip>
 extern "C" {
 #include "get_walltime.c"
@@ -90,7 +92,7 @@ void PrintMatrix(std::vector<std::vector<T>> matrix){
  */
 double CalculateMFLOPS(double total_time){
     double flop = 2 * N * N * N * REPEAT;
-    double mflops = flop / (total_time * 1e6f);
+    double mflops = flop / std::fmax(0.001f, (total_time * 1e6f));
     return mflops;
 }
 
@@ -125,24 +127,24 @@ void SaveResultsToCSV(const std::string& peak_performance, const std::string& ac
         outfile.close();
     }
 
-    std::string line;
-    std::string matrix_size_str = std::to_string(N);
-    std::streampos found_pos;
-    std::streampos line_lengths = 0;
-    bool matrix_size_found = false;
+    // std::string line;
+    // std::string matrix_size_str = std::to_string(N);
+    // std::streampos found_pos;
+    // std::streampos line_lengths = 0;
+    // bool matrix_size_found = false;
 
-    while (std::getline(infile, line)) {
-        size_t position_in_line = line.find(matrix_size_str);
-        if (position_in_line != std::string::npos) {
-            std::streampos stream_position = static_cast<std::streampos>(position_in_line);
-            found_pos = line_lengths + stream_position;
-            matrix_size_found = true;
-            break;
-        } else {
-            size_t line_length = line.length();
-            line_lengths += static_cast<std::streampos>(line_length + 1);
-        }
-    }
+    // while (std::getline(infile, line)) {
+    //     size_t position_in_line = line.find(matrix_size_str);
+    //     if (position_in_line != std::string::npos) {
+    //         std::streampos stream_position = static_cast<std::streampos>(position_in_line);
+    //         found_pos = line_lengths + stream_position;
+    //         matrix_size_found = true;
+    //         break;
+    //     } else {
+    //         size_t line_length = line.length();
+    //         line_lengths += static_cast<std::streampos>(line_length + 1);
+    //     }
+    // }
 
     std::ofstream outfile(FILENAME, std::ios::in | std::ios::out | std::ios::binary);
     std::string header_line = "matrix_size,peak_performance,achieved_performance";
@@ -154,16 +156,17 @@ void SaveResultsToCSV(const std::string& peak_performance, const std::string& ac
         outfile << header_line << std::endl;
     }
 
-    outfile.seekp(0, std::ios::beg);
+    // outfile.seekp(0, std::ios::beg);
 
-    if(matrix_size_found) {
-        outfile.seekp(found_pos);
-        outfile << N << "," << peak_performance << "," << achieved_performance; 
-    } else {
-        outfile.seekp(0, std::ios::end);
-        outfile << N << "," << peak_performance << "," << achieved_performance << std::endl;
-    }
-
+    // if(matrix_size_found) {
+    //     outfile.seekp(found_pos);
+    //     outfile << N << "," << peak_performance << "," << achieved_performance; 
+    // } else {
+    //     outfile.seekp(0, std::ios::end);
+    //     outfile << N << "," << peak_performance << "," << achieved_performance << std::endl;
+    // }
+    outfile.seekp(0, std::ios::end);
+    outfile << N << "," << peak_performance << "," << achieved_performance << std::endl;
     infile.close();
     outfile.close();
 }
