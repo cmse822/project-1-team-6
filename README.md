@@ -73,7 +73,7 @@ In this first part of the project, you will test the performance of the basic ma
 
       | Name   | Processor          | L1 Instruction Cache | L1 Data Cache | L2 Cache | L3 Cache | Clock Speed | Cores | FPU (Assume 1) | Theoretical Peak Performance | Hardware Source |
       |--------|--------------------|-----------------------|---------------|----------|----------|-------------|-------|----------------|-------------------------------|-----------------|
-      | Chris Laptop  | 11th Gen i7-1185G7 | 48 KB per core        | 32 KB per core | 1280 KB per core | 12 MB shared | 3.00 GHz    | 4     | 1              | **12 GFLOPS** | [Source](https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-1185G7+%40+3.00GHz&id=3793) |
+      | Onur Laptop  | 11th Gen i7-1185G7 | 3KB per core        | 48 KB per core | 1280 KB per core | 24 MB shared | 4.20 GHz    | 4     | 1              | **33.6 GFLOPS** | [Source](https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-1185G7+%40+3.00GHz&id=3793) |
       | HPCC dev-amd20  | AMD EPYC 7H12 64-Core Processor | 32 KB per core        | 32 KB per core | 512 KB per core | 256 MB shared | 2.60 GHz    | 64     | 1              | **166.4 GFLOPS** | [Source](https://www.amd.com/en/products/cpu/amd-epyc-7h12) |
 
     For the laptop, the theoretical peak peformance was much higher then the performance measured in question 3. We believe this is because of the other processes running on the laptop that are also taking up a lot of the processors utilization and limiting the performance potential.
@@ -114,15 +114,77 @@ In this part, you will explore the roofline model for analyzing the interplay be
 
 3. Run the ERT in serial mode on your local machine. Report the peak performances and bandwidths (for all caches levels as well as DRAM). Where is the "ridge point" of the roofline for the various cases?
 
-    TBD
+    **LAPTOP**
+
+    The charts below were generated when running the empirical roofline tool to give us the bandwidths and peak performances for each memory hierarchy level :
+
+    ![Bandwidth Model Image](local_system_results/empirical_peak_performance_bandwidth.png)
+    ![Peak Performance Model Image](local_system_results/empirical_peak_performance_gflops.png)
+    ![Empirical Roofline Graph](local_system_results/roofline.png)
+
+    Below is the roofline model that was generated using the roofline visualizer. This was using the imported JSON that was generated when running the empiracle roofline tool:
+
+    ![Annotated Roofline Model](local_system_results/roofline_model.png)
+    
+
+    As shown above, we can see the compute bound and memory bound sections of the graph. The ridge point is the minimum operational intensity required to achieve maximum performance. This is also the point where the memory hierarchies can become compute bound. 
+    
+    These results are reported in the table below, along with the peak performance for each cache level (and DRAM), and the bandwidths:
+
+
+    |                       |L1|L2|L3|DRAM|
+    |-----------------------|---|---|---|----|
+    | **Ridge Point (Flops/Byte)** | 0.22  | 0.26  | 0.36  | 1.99   |
+    | **Peak Performance (GFLOP/s)** | 62.08  | 62.08  | 62.08  | 62.08  |
+    | **Bandwidths (GB/s)** | 288.40  | 238.60  | 172.60  | 31.10   |
+
+    ---
+
+    **HPCC-dev-amd20**
+
+    Below is the results repeated for the second architecture of choice (HPCC)
+
+    ![Bandwidth Model Image](hpcc_system_results/empirical_peak_performance_bandwidth.png)
+    ![Peak Performance Model Image](hpcc_system_results/empirical_peak_performance_gflops.png)
+    ![Empirical Roofline Graph](hpcc_system_results/roofline.png)
+    ![Annotated Roofline Model](hpcc_system_results/roofline_model.png)
+
+
+    |                       |L1|L2|L3|DRAM|
+    |-----------------------|---|---|---|----|
+    | **Ridge Point (Flops/Byte)** | 0.25  | 0.58  | 0.74  | 0.98   |
+    | **Peak Performance (GFLOP/s)** | 25.52  | 25.52  | 25.52  | 25.52   |
+    | **Bandwidths (GB/s)** | 101.30  | 44.30  | 34.50  | 26.10   |
+
+
+
 
 4. Consider the four FP kernels in "Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures" (see their Table 2). Assuming the high end of operational (i.e., "arithmetic") intensity, how would these kernels perform on the platforms you are testing? What optimization strategy would you recommend to increase performance of these kernels?
 
-    TBD
+    If we consider Sparse Matrix-Vector Multiplication(SpMV), we can see that amount of data that are unnecessarily computed, stored or loaded from memory is huge. That's also mentioned in the [Paper], suggesting that conventional implementations are less than 10% of what the system can do. There are lots of representations regarding to the calculations that includes the sparse matrices. Most of those representations try to compress the matrix itself into a couple of vectors so that only not-zero data can stay in the memory and operated on.
+
+    One example of those representations is Compressed Row Storage (CRS). CRS generates 3 different vectors, namely value vector, column index vector and row pointer vector. Value vector only consists of the non-zero floating points and the others are integer vectors since they store addresses or indices. 
+
+    CRS travels the matrix in a rowwise fashion and stores the non-zero floating points into contiguous memory locations to increase the affinity of temporal-locality. In parallel, it also stores the found non-zero floating point number's row pointer and column index to the respective vectors. 
+
+    In the end, amount of storage we succesfully ignored depends on the sparsity of the matrix itself. While normal representation of those matrices fills up the space with $n^2$, with CRS, we only require $2nnz + n + 1$. Access to an element from this compressed matrix requires more attention. Many more libraries are using CRS or a variant of a CRS to represent and operate with matrices and Eigen[https://eigen.tuxfamily.org/dox/group__TutorialSparse.html] is a good example
 
 5. Address the same questions in (4) for the four kernels given in the Warm-up above.
 
-    TBD
+    1. **Kernel 1**
+       1. Kernel has Arithmetic Intensity of the $3/32 = 0.09375$ which shows that the kernel is memory-bound. 
+       2. We can also infer that most of the time processor spend time waiting for memory load/store operations rather than doing floating point operations
+       3. If we swap the $j$ and $i$ index variables for the for loop, we can increase the affinity of spatial-locality.
+    2. **Kernel 2**
+       1. Kernel has Arithmetic Intensity of the $1/4 = 0.25$ which shows that the kernel is memory-bound. 
+       2. For comparison with the other kernels, we see that kernel has higher Arithmetic Intensity and it is past the L1 Cache's ridge point, which is $0.22$. However, if it is before the L2 Cache's ridge point, which is $0.26$. If this kernel only uses L1 cache, it is compute bound. If it goes to L2 cache, then it is memory bound. It depends on the size of the vectors.
+       3. We can use loop-unrolling here to utilize the pipelining for our system.
+    3. **Kernel 3**
+       1. Kernel has Arithmetic Intensity of the $1/8 = 0.125$ which shows that the kernel is memory-bound. 
+       2. We can use loop-unrolling here to utilize the pipelining for our system.
+    4. **Kernel 4**
+       1. Kernel has Arithmetic Intensity of the $1/12 = 0.083$ which shows that the kernel is memory-bound. 
+       2. We can use loop-unrolling here to utilize the pipelining for our system.
 
 6. Compare your results for the roofline model to what you obtained for the matrix-matrix multiplication operation from Part 1. How are the rooflines of memory bandwidth related to the features in the algorithmic performance as a function of matrix size?
 
@@ -132,7 +194,7 @@ To your project write-up, add your plots of the roofline model for the systems y
 
 <br>
 <br>
-
+z
 ---
 
 # Running Project 1
