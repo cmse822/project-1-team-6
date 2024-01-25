@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
     std::vector<std::vector<double>> mat1(N, std::vector<double>(N));
     std::vector<std::vector<double>> mat2(N, std::vector<double>(N));
 
-    printf("Starting the program with %dx%d matrices\n", N, N);
+    printf("Starting the program with %ldx%ld matrices\n", N, N);
 
     for(size_t j=0; j < mat1[0].size(); j++){
         for(size_t k=0; k < mat1[0].size(); k++){
@@ -221,10 +221,12 @@ int main(int argc, char* argv[]) {
     double mflops = CalculateMFLOPS(total_time);
 
     ComputeComponent cc = {"Chris", 4, 3.0f, 1};
-    const auto& peak_perf = CalculateTheoreticalPeakPerformance(cc);
+    ComputeComponent co = {"Onur", 8, 4.2f, 1};
 
-    printf("Theoretical Performance [%s] is: %f Mflop/s\n", cc.name.c_str(), peak_perf); 
-    printf("Total Mflop/s with %d repeats: %f Mflop/s\n", REPEAT, mflops);
+    const auto& peak_perf = CalculateTheoreticalPeakPerformance(co);
+
+    printf("Theoretical Performance [%s] is: %f Mflop/s\n", co.name.c_str(), peak_perf); 
+    printf("Total Mflop/s with %ld repeats: %f Mflop/s\n", REPEAT, mflops);
     printf("Writing results to %s\n", FILENAME.c_str());
     SaveResultsToCSV(std::to_string(peak_perf * 1e-3), std::to_string(mflops * 1e-3));
     printf("Finished writing results to %s\nExiting.", FILENAME.c_str());
