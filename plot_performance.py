@@ -18,7 +18,8 @@ def plot_performance_results(filename):
 
     plt.xlabel("Matrix Size (N)")
     plt.ylabel("GFLOPS")
-    plt.title("Peak vs. Achieved Performance")
+    #plt.title("Peak vs. Achieved Performance")
+    plt.title("Achieved Performance")
     plt.legend(loc="center right", fancybox=True, shadow=True)
     #plt.savefig('peak_vs_achieved_performance.png', bbox_inches='tight')
     plt.savefig('achieved_performance.png', bbox_inches='tight')
