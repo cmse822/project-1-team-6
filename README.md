@@ -119,7 +119,9 @@ In this part, you will explore the roofline model for analyzing the interplay be
     The charts below were generated when running the empirical roofline tool to give us the bandwidths and peak performances for each memory hierarchy level :
 
     ![Bandwidth Model Image](local_system_results/empirical_peak_performance_bandwidth.png)
+   
     ![Peak Performance Model Image](local_system_results/empirical_peak_performance_gflops.png)
+   
     ![Empirical Roofline Graph](local_system_results/roofline.png)
 
     Below is the roofline model that was generated using the roofline visualizer. This was using the imported JSON that was generated when running the empiracle roofline tool:
@@ -143,9 +145,13 @@ In this part, you will explore the roofline model for analyzing the interplay be
     Below is the results repeated for the second architecture of choice (HPCC)
 
     ![Bandwidth Model Image](hpcc_system_results/empirical_peak_performance_bandwidth.png)
+   
     ![Peak Performance Model Image](hpcc_system_results/empirical_peak_performance_gflops.png)
+   
     ![Empirical Roofline Graph](hpcc_system_results/roofline.png)
+   
     ![Annotated Roofline Model](hpcc_system_results/roofline_model.png)
+   
 
     |                       |L1|L2|L3|DRAM|
     |-----------------------|---|---|---|----|
@@ -153,7 +159,7 @@ In this part, you will explore the roofline model for analyzing the interplay be
     | **Peak Performance (GFLOP/s)** | 25.52  | 25.52  | 25.52  | 25.52   |
     | **Bandwidths (GB/s)** | 101.30  | 44.30  | 34.50  | 26.10   |
 
-4. Consider the four FP kernels in "Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures" (see their Table 2). Assuming the high end of operational (i.e., "arithmetic") intensity, how would these kernels perform on the platforms you are testing? What optimization strategy would you recommend to increase performance of these kernels?
+5. Consider the four FP kernels in "Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures" (see their Table 2). Assuming the high end of operational (i.e., "arithmetic") intensity, how would these kernels perform on the platforms you are testing? What optimization strategy would you recommend to increase performance of these kernels?
 
     If we consider Sparse Matrix-Vector Multiplication(SpMV), we can see that amount of data that are unnecessarily computed, stored or loaded from memory is huge. That's also mentioned in the [Paper], suggesting that conventional implementations are less than 10% of what the system can do. There are lots of representations regarding to the calculations that includes the sparse matrices. Most of those representations try to compress the matrix itself into a couple of vectors so that only not-zero data can stay in the memory and operated on.
 
@@ -163,7 +169,7 @@ In this part, you will explore the roofline model for analyzing the interplay be
 
     In the end, amount of storage we succesfully ignored depends on the sparsity of the matrix itself. While normal representation of those matrices fills up the space with $n^2$, with CRS, we only require $2nnz + n + 1$. Access to an element from this compressed matrix requires more attention. Many more libraries are using CRS or a variant of a CRS to represent and operate with matrices and Eigen[https://eigen.tuxfamily.org/dox/group__TutorialSparse.html] is a good example
 
-5. Address the same questions in (4) for the four kernels given in the Warm-up above.
+6. Address the same questions in (4) for the four kernels given in the Warm-up above.
 
     1. **Kernel 1**
        1. Kernel has Arithmetic Intensity of the $3/32 = 0.09375$ which shows that the kernel is memory-bound for both systems.
@@ -180,7 +186,7 @@ In this part, you will explore the roofline model for analyzing the interplay be
        1. Kernel has Arithmetic Intensity of the $1/12 = 0.083$ which shows that the kernel is memory-bound for both systems.
        2. We can use loop-unrolling here to utilize the pipelining for our system.
 
-6. Compare your results for the roofline model to what you obtained for the matrix-matrix multiplication operation from Part 1. How are the rooflines of memory bandwidth related to the features in the algorithmic performance as a function of matrix size?
+7. Compare your results for the roofline model to what you obtained for the matrix-matrix multiplication operation from Part 1. How are the rooflines of memory bandwidth related to the features in the algorithmic performance as a function of matrix size?
 
     They are related in that the same dropoffs in memory bandwidth also happen when cache sizes are reached and data needs to be fetched from lower levels of the memory hierarchy. We can see that in the algorithmic performance charts of our two systems, where after a certain matrix size, the performance degrades. This is very noticeable when we reported the achieved performance and compared it to the attainable from the roofline model. If our peak 'achieved' performance (for the laptop system) in GFLOPs for our L1 cache is around 8 GFLOPs, then lining that up to the roofline model puts us at at an operational intensity less then .06 and shows that we are memory bound. If this is the case, then our bottleneck is on memory bandwidth, and we see the dropoff in performance become correlated to the levels of cache we access. This makes sense physically as the L2, L3 and DRAM are further away from the CPU then L1 cache, so bandwidth is degraded and latency is increased. The bandwidth peaks for each level in question 3 above further proves that bandwidth performance degrades. The nail in the coffin is knowing that we are memory bound, and seeing the GFLOPs dropoff at each cache level in Part 1, which is directly impacted not because of CPU performance, but because of data transfer limits inbetween the memory levels.
 
