@@ -61,9 +61,9 @@ In this first part of the project, you will test the performance of the basic ma
 
     For `N=100` and using the supplied C routine, the performance of the matrix-matrix multiply for both compute architectures is listed below:
 
-    - **LAPTOP**: `3312.133 Mflop/s`
+    - **LAPTOP**: `6562.484 Mflop/s`
 
-    - **HPCC dev-amd20**: `7906.694943 Mflop/s`
+    - **HPCC dev-amd20**: `7906.695 Mflop/s`
 
     This was repeated `20` times to eliminate any statistical noise.
 
@@ -94,7 +94,7 @@ In this first part of the project, you will test the performance of the basic ma
 
 6. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
 
-      The measured performance is far off from the peak performance. The peak of the achieved performance is close to 4 Gflop/s, which is roughly 1/3 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off at around 200 matrix size when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this big drop off around 400 when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache. Finally, the final drop occurs around 900 when the L3 cache size is reached and it needs to go out to DRAM.
+      The measured performance is far off from the peak performance. The peak of the achieved performance is close to 8 Gflop/s, which is roughly 1/4 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off at around 1100 matrix size when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this big drop off around 1300 when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache. Finally, the final drop occurs around 1600 when the L3 cache size is reached and it needs to go out to DRAM.
 
       The features are similar to that in the HPCC architecture, where the performance is best in the beginning with smaller matrix sizes, but continues to degrade overtime as each level of the cache sizes fill up.
 
@@ -125,12 +125,10 @@ In this part, you will explore the roofline model for analyzing the interplay be
     Below is the roofline model that was generated using the roofline visualizer. This was using the imported JSON that was generated when running the empiracle roofline tool:
 
     ![Annotated Roofline Model](local_system_results/roofline_model.png)
-    
 
-    As shown above, we can see the compute bound and memory bound sections of the graph. The ridge point is the minimum operational intensity required to achieve maximum performance. This is also the point where the memory hierarchies can become compute bound. 
-    
+    As shown above, we can see the compute bound and memory bound sections of the graph. The ridge point is the minimum operational intensity required to achieve maximum performance. This is also the point where the memory hierarchies can become compute bound.
+
     These results are reported in the table below, along with the peak performance for each cache level (and DRAM), and the bandwidths:
-
 
     |                       |L1|L2|L3|DRAM|
     |-----------------------|---|---|---|----|
@@ -149,52 +147,48 @@ In this part, you will explore the roofline model for analyzing the interplay be
     ![Empirical Roofline Graph](hpcc_system_results/roofline.png)
     ![Annotated Roofline Model](hpcc_system_results/roofline_model.png)
 
-
     |                       |L1|L2|L3|DRAM|
     |-----------------------|---|---|---|----|
     | **Ridge Point (Flops/Byte)** | 0.25  | 0.58  | 0.74  | 0.98   |
     | **Peak Performance (GFLOP/s)** | 25.52  | 25.52  | 25.52  | 25.52   |
     | **Bandwidths (GB/s)** | 101.30  | 44.30  | 34.50  | 26.10   |
 
-
-
-
 4. Consider the four FP kernels in "Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures" (see their Table 2). Assuming the high end of operational (i.e., "arithmetic") intensity, how would these kernels perform on the platforms you are testing? What optimization strategy would you recommend to increase performance of these kernels?
 
     If we consider Sparse Matrix-Vector Multiplication(SpMV), we can see that amount of data that are unnecessarily computed, stored or loaded from memory is huge. That's also mentioned in the [Paper], suggesting that conventional implementations are less than 10% of what the system can do. There are lots of representations regarding to the calculations that includes the sparse matrices. Most of those representations try to compress the matrix itself into a couple of vectors so that only not-zero data can stay in the memory and operated on.
 
-    One example of those representations is Compressed Row Storage (CRS). CRS generates 3 different vectors, namely value vector, column index vector and row pointer vector. Value vector only consists of the non-zero floating points and the others are integer vectors since they store addresses or indices. 
+    One example of those representations is Compressed Row Storage (CRS). CRS generates 3 different vectors, namely value vector, column index vector and row pointer vector. Value vector only consists of the non-zero floating points and the others are integer vectors since they store addresses or indices.
 
-    CRS travels the matrix in a rowwise fashion and stores the non-zero floating points into contiguous memory locations to increase the affinity of temporal-locality. In parallel, it also stores the found non-zero floating point number's row pointer and column index to the respective vectors. 
+    CRS travels the matrix in a rowwise fashion and stores the non-zero floating points into contiguous memory locations to increase the affinity of temporal-locality. In parallel, it also stores the found non-zero floating point number's row pointer and column index to the respective vectors.
 
     In the end, amount of storage we succesfully ignored depends on the sparsity of the matrix itself. While normal representation of those matrices fills up the space with $n^2$, with CRS, we only require $2nnz + n + 1$. Access to an element from this compressed matrix requires more attention. Many more libraries are using CRS or a variant of a CRS to represent and operate with matrices and Eigen[https://eigen.tuxfamily.org/dox/group__TutorialSparse.html] is a good example
 
 5. Address the same questions in (4) for the four kernels given in the Warm-up above.
 
     1. **Kernel 1**
-       1. Kernel has Arithmetic Intensity of the $3/32 = 0.09375$ which shows that the kernel is memory-bound. 
-       2. We can also infer that most of the time processor spend time waiting for memory load/store operations rather than doing floating point operations
+       1. Kernel has Arithmetic Intensity of the $3/32 = 0.09375$ which shows that the kernel is memory-bound for both systems.
+       2. We can also infer that most of the time processor spends time waiting for memory load/store operations rather than doing floating point operations
        3. If we swap the $j$ and $i$ index variables for the for loop, we can increase the affinity of spatial-locality.
     2. **Kernel 2**
-       1. Kernel has Arithmetic Intensity of the $1/4 = 0.25$ which shows that the kernel is memory-bound. 
-       2. For comparison with the other kernels, we see that kernel has higher Arithmetic Intensity and it is past the L1 Cache's ridge point, which is $0.22$. However, if it is before the L2 Cache's ridge point, which is $0.26$. If this kernel only uses L1 cache, it is compute bound. If it goes to L2 cache, then it is memory bound. It depends on the size of the vectors.
+       1. Kernel has Arithmetic Intensity of the $1/4 = 0.25$ which shows that the kernel is memory-bound for both systems.
+       2. For comparison with the other kernels, we see that kernel has higher Arithmetic Intensity and it is past the L1 Cache's ridge point (for HPCC, but same as ridge point for laptop), which is $0.22$. However, if it is before the L2 Cache's ridge point, which is $0.26$. If this kernel only uses L1 cache, it is compute bound. If it goes to L2 cache, then it is memory bound. It depends on the size of the vectors.
        3. We can use loop-unrolling here to utilize the pipelining for our system.
     3. **Kernel 3**
-       1. Kernel has Arithmetic Intensity of the $1/8 = 0.125$ which shows that the kernel is memory-bound. 
+       1. Kernel has Arithmetic Intensity of the $1/8 = 0.125$ which shows that the kernel is memory-bound for both systems.
        2. We can use loop-unrolling here to utilize the pipelining for our system.
     4. **Kernel 4**
-       1. Kernel has Arithmetic Intensity of the $1/12 = 0.083$ which shows that the kernel is memory-bound. 
+       1. Kernel has Arithmetic Intensity of the $1/12 = 0.083$ which shows that the kernel is memory-bound for both systems.
        2. We can use loop-unrolling here to utilize the pipelining for our system.
 
 6. Compare your results for the roofline model to what you obtained for the matrix-matrix multiplication operation from Part 1. How are the rooflines of memory bandwidth related to the features in the algorithmic performance as a function of matrix size?
 
-    TBD
+    They are related in that the same dropoffs in memory bandwidth also happen when cache sizes are reached and data needs to be fetched from lower levels of the memory hierarchy. We can see that in the algorithmic performance charts of our two systems, where after a certain matrix size, the performance degrades. This is very noticeable when we reported the achieved performance and compared it to the attainable from the roofline model. If our peak 'achieved' performance (for the laptop system) in GFLOPs for our L1 cache is around 8 GFLOPs, then lining that up to the roofline model puts us at at an operational intensity less then .06 and shows that we are memory bound. If this is the case, then our bottleneck is on memory bandwidth, and we see the dropoff in performance become correlated to the levels of cache we access. This makes sense physically as the L2, L3 and DRAM are further away from the CPU then L1 cache, so bandwidth is degraded and latency is increased. The bandwidth peaks for each level in question 3 above further proves that bandwidth performance degrades. The nail in the coffin is knowing that we are memory bound, and seeing the GFLOPs dropoff at each cache level in Part 1, which is directly impacted not because of CPU performance, but because of data transfer limits inbetween the memory levels.
 
 To your project write-up, add your plots of the roofline model for the systems you tested, and responses addressing the above questions.
 
 <br>
 <br>
-z
+
 ---
 
 # Running Project 1
@@ -232,5 +226,5 @@ This will save an image to the root directory, which is showing how the achieved
 Our deliverables are already found in the GitHub repository. Locate the following:
 
 - Code for performing the matrix-matrix multiply performance measurements: `matrix_multi.cpp`
-- Plot of the performance results: `local_system_results/peak_vs_achieved_performance.png` and `hpcc_system_results/peak_vs_achieved_performance.png`
-- Brief write-up: In this `README.md`, in red text above.
+- Plot of the performance and roofline model results, located in: `local_system_results/` and `hpcc_system_results/`
+- Brief write-up: In this `README.md` filling in the questions for Part 1 and Part 2.
