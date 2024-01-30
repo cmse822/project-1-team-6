@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-FILENAME = "data.csv"
+FILENAME = "data_hpcc.csv"
 
 def plot_performance_results(filename):
     df = pd.read_csv(filename)
