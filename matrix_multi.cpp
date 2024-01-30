@@ -4,14 +4,9 @@
 #include <random>
 #include <fstream>
 #include <algorithm>
-
-// #include <iomanip>
 extern "C" {
 #include "get_walltime.c"
 }
-
-// #define PRECISION 3
-// #define GROUP_MEMBERS {"Chris", "Onur", "Melina", "Hunter"}
 
 const std::string FILENAME = "data.csv";
 const size_t REPEAT = 20;
@@ -56,7 +51,8 @@ void MatMul(    const   std::vector<std::vector<double>>& a,
     for (size_t i = 0; i < a.size(); i++) {
         for(size_t k=0; k < a[0].size(); k++){
             for(size_t j=0; j < a[0].size(); j++){
-                c[i][j] += a[i][k] * b[k][j];   
+                // 8 Bytes * 3 (2 read, 1 store) = 24 bytes; 2 FLOPS (add, mult) per iter. 2/24 = 0.08333
+                c[i][j] += a[i][k] * b[k][j];            
             }
         }
     }
@@ -127,25 +123,6 @@ void SaveResultsToCSV(const std::string& peak_performance, const std::string& ac
         outfile.close();
     }
 
-    // std::string line;
-    // std::string matrix_size_str = std::to_string(N);
-    // std::streampos found_pos;
-    // std::streampos line_lengths = 0;
-    // bool matrix_size_found = false;
-
-    // while (std::getline(infile, line)) {
-    //     size_t position_in_line = line.find(matrix_size_str);
-    //     if (position_in_line != std::string::npos) {
-    //         std::streampos stream_position = static_cast<std::streampos>(position_in_line);
-    //         found_pos = line_lengths + stream_position;
-    //         matrix_size_found = true;
-    //         break;
-    //     } else {
-    //         size_t line_length = line.length();
-    //         line_lengths += static_cast<std::streampos>(line_length + 1);
-    //     }
-    // }
-
     std::ofstream outfile(FILENAME, std::ios::in | std::ios::out | std::ios::binary);
     std::string header_line = "matrix_size,peak_performance,achieved_performance";
 
@@ -156,15 +133,6 @@ void SaveResultsToCSV(const std::string& peak_performance, const std::string& ac
         outfile << header_line << std::endl;
     }
 
-    // outfile.seekp(0, std::ios::beg);
-
-    // if(matrix_size_found) {
-    //     outfile.seekp(found_pos);
-    //     outfile << N << "," << peak_performance << "," << achieved_performance; 
-    // } else {
-    //     outfile.seekp(0, std::ios::end);
-    //     outfile << N << "," << peak_performance << "," << achieved_performance << std::endl;
-    // }
     outfile.seekp(0, std::ios::end);
     outfile << N << "," << peak_performance << "," << achieved_performance << std::endl;
     infile.close();
