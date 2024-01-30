@@ -118,15 +118,15 @@ In this part, you will explore the roofline model for analyzing the interplay be
 
     The charts below were generated when running the empirical roofline tool to give us the bandwidths and peak performances for each memory hierarchy level :
 
-    ![Bandwidth Model Image](local_system_results/empirical_peak_performance_bandwidth.png)
+    ![Bandwidth Model Image](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/empirical_peak_performance_bandwidth.png)
    
-    ![Peak Performance Model Image](local_system_results/empirical_peak_performance_gflops.png)
+    ![Peak Performance Model Image](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/empirical_peak_performance_gflops.png)
    
-    ![Empirical Roofline Graph](local_system_results/roofline.png)
+    ![Empirical Roofline Graph](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/roofline.png)
 
     Below is the roofline model that was generated using the roofline visualizer. This was using the imported JSON that was generated when running the empiracle roofline tool:
 
-    ![Annotated Roofline Model](local_system_results/roofline_model.png)
+    ![Annotated Roofline Model](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/roofline_model.png)
 
     As shown above, we can see the compute bound and memory bound sections of the graph. The ridge point is the minimum operational intensity required to achieve maximum performance. This is also the point where the memory hierarchies can become compute bound.
 
@@ -144,13 +144,13 @@ In this part, you will explore the roofline model for analyzing the interplay be
 
     Below is the results repeated for the second architecture of choice (HPCC)
 
-    ![Bandwidth Model Image](hpcc_system_results/empirical_peak_performance_bandwidth.png)
+    ![Bandwidth Model Image](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/empirical_peak_performance_bandwidth.png)
    
-    ![Peak Performance Model Image](hpcc_system_results/empirical_peak_performance_gflops.png)
+    ![Peak Performance Model Image](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/empirical_peak_performance_gflops.png)
    
-    ![Empirical Roofline Graph](hpcc_system_results/roofline.png)
+    ![Empirical Roofline Graph](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/roofline.png)
    
-    ![Annotated Roofline Model](hpcc_system_results/roofline_model.png)
+    ![Annotated Roofline Model](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/roofline_model.png)
    
 
     |                       |L1|L2|L3|DRAM|
