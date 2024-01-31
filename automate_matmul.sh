@@ -1,4 +1,6 @@
 #!/bin/bash
+echo -e "=================================\n| CMSE-822 | Team-6 | Project-1 |\n=================================\n"
+
 rm data.csv 2> /dev/null
 # Compile and link
 g++ matrix_multi.cpp -lstdc++ -O3 -g -std=c++17 -o matmul
