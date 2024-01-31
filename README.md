@@ -88,11 +88,15 @@ In this first part of the project, you will test the performance of the basic ma
 
       ![Local Performance Image](local_system_results/peak_vs_achieved_performance.png)
 
+      ![Local Performance Image](local_system_results/achieved_perf.png)
+
       **HPCC dev-amd20**
 
       ![HPCC dev-amd20 Performance Image](hpcc_system_results/peak_vs_achieved_performance.png)
+   
+      ![HPCC dev-amd20 Performance Image](hpcc_system_results/achieved_perf_hpcc.png)
 
-6. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
+7. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
 
       The measured performance is far off from the peak performance. The peak of the achieved performance is close to 8 Gflop/s, which is roughly 1/4 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off at around 1100 matrix size when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this big drop off around 1300 when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache. Finally, the final drop occurs around 1600 when the L3 cache size is reached and it needs to go out to DRAM.
 
