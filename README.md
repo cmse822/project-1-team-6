@@ -86,13 +86,13 @@ In this first part of the project, you will test the performance of the basic ma
 
       **LAPTOP**
 
-      ![Local Performance Image](local_system_results/peak_vs_achieved_performance.png)
+      ![peak_v_ach_local](https://github.com/cmse822/project-1-team-6/assets/94200328/58e28e90-162b-48c0-805a-e2eb8ecbd6a4)
 
       ![Achieved_perf_local2](https://github.com/cmse822/project-1-team-6/assets/94200328/d1be556c-2b99-4b57-8684-62554d1b3024)
 
       **HPCC dev-amd20**
 
-      ![HPCC dev-amd20 Performance Image](hpcc_system_results/peak_vs_achieved_performance.png)
+      ![peak_v_ach_hpcc](https://github.com/cmse822/project-1-team-6/assets/94200328/41760ed5-2a2a-4c94-b5a1-7f0d00f2518f)
    
       ![Achieved_perf_hpcc2](https://github.com/cmse822/project-1-team-6/assets/94200328/66a35ecd-9fc1-4184-85fa-1984a0e4abde)
 
