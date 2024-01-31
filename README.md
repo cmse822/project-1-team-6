@@ -93,15 +93,14 @@ In this first part of the project, you will test the performance of the basic ma
       **HPCC dev-amd20**
 
       ![peak_v_ach_hpcc](https://github.com/cmse822/project-1-team-6/assets/94200328/41760ed5-2a2a-4c94-b5a1-7f0d00f2518f)
-   
+
       ![Achieved_perf_hpcc](https://github.com/cmse822/project-1-team-6/assets/94200328/66a35ecd-9fc1-4184-85fa-1984a0e4abde)
 
-
-7. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
+6. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
 
       The measured performance is far off from the peak performance. The peak of the achieved performance is close to 8 Gflop/s, which is roughly 1/4 of the theoretical peak performance of the system. The achieved performance is best in the beginning when data is read into the L1 cache, but drops off at around 1100 matrix size when the L1 cache size is reached and the data needs to be retireved from the L2 cache. Again, we see this big drop off around 1300 when the L2 cache then reaches it's size limit and data needs to be grabbed from the L3 cache. Finally, the final drop occurs around 1600 when the L3 cache size is reached and it needs to go out to DRAM.
 
-      The features are similar to that in the HPCC architecture, where the performance is best in the beginning with smaller matrix sizes, but continues to degrade overtime as each level of the cache sizes fill up.
+      The features are similar to that in the HPCC architecture, where the performance is best in the beginning with smaller matrix sizes, but continues to degrade overtime as each level of the cache sizes fill up. For this architecture, the peak achieved performance is around 8.5 Gflop/s, which is roughly 1/20th of the theoretical peak performance of the system. We can see the achieved performance is best in the beginning, plateaus around the same N as the laptop architecture, then drops off at 1200 matrix size when L1 cache is filled. Similarly, another dropoff occurs at 1400 for the L2 cache. Lastly, the size limit for the L3 cache looks to be reached at 1600, at which this point the data will be retrieved from DRAM.
 
 To your project git repo, commit your code for performing the matrix-matrix multiply performance measurements, the plots of your results, and a brief write-up (in plain text or markdown) addressing the above questions and discussing your results. Pay particular attention to the comparison between different architectures and give explanations for them.
 
@@ -124,9 +123,9 @@ In this part, you will explore the roofline model for analyzing the interplay be
     The charts below were generated when running the empirical roofline tool to give us the bandwidths and peak performances for each memory hierarchy level :
 
     ![Bandwidth Model Image](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/empirical_peak_performance_bandwidth.png)
-   
+
     ![Peak Performance Model Image](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/empirical_peak_performance_gflops.png)
-   
+
     ![Empirical Roofline Graph](https://github.com/cmse822/project-1-team-6/blob/main/local_system_results/roofline.png)
 
     Below is the roofline model that was generated using the roofline visualizer. This was using the imported JSON that was generated when running the empiracle roofline tool:
@@ -150,13 +149,12 @@ In this part, you will explore the roofline model for analyzing the interplay be
     Below is the results repeated for the second architecture of choice (HPCC)
 
     ![Bandwidth Model Image](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/empirical_peak_performance_bandwidth.png)
-   
+
     ![Peak Performance Model Image](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/empirical_peak_performance_gflops.png)
-   
+
     ![Empirical Roofline Graph](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/roofline.png)
-   
+
     ![Annotated Roofline Model](https://github.com/cmse822/project-1-team-6/blob/main/hpcc_system_results/roofline_model.png)
-   
 
     |                       |L1|L2|L3|DRAM|
     |-----------------------|---|---|---|----|
@@ -231,6 +229,10 @@ python plot_performance.py
 ```
 
 This will save an image to the root directory, which is showing how the achieved performance compares to the systems peak performance and how it differs over the range of results you ran for the C++ program.
+
+## Running Shell Script
+
+Note that you can also run the `automate_matmul.sh` shell script to quickly run through the various matrix sizes and plot the results generated by the matrix_multi.cpp.
 
 ## Deliverables
 
