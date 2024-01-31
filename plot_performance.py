@@ -12,7 +12,7 @@ def plot_performance_results(filename):
     peak_performance = df['peak_performance'].astype(np.float32)
     achieved_performance = df['achieved_performance'].astype(np.float32)
 
-    plt.scatter(n_values, achieved_performance, label="Achieved Performance", color="red", marker="o")
+    plt.plot(n_values, achieved_performance, label="Achieved Performance", color="red", marker="None")
     plt.plot(n_values, achieved_performance, color='red', alpha=0.5, marker = 'None') 
     #plt.hlines(y=peak_performance[0], xmin=n_values.min(), xmax=n_values.max(), label="Peak Performance", color="blue", linestyles='dashed')
     
