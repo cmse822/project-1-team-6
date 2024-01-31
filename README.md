@@ -88,8 +88,8 @@ In this first part of the project, you will test the performance of the basic ma
 
       ![Local Performance Image](local_system_results/peak_vs_achieved_performance.png)
 
-      ![Achieved_perf](https://github.com/cmse822/project-1-team-6/assets/94200328/f6657c99-c1b6-4e11-b3bf-f6f1d6904211)
-
+      ![Achieved_perf_local](https://github.com/cmse822/project-1-team-6/assets/94200328/af0b7005-7e95-4ca8-9240-ef60f1f430f3)
+   
       **HPCC dev-amd20**
 
       ![HPCC dev-amd20 Performance Image](hpcc_system_results/peak_vs_achieved_performance.png)
