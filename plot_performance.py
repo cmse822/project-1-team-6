@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-#FILENAME = "data.csv"
-FILENAME = "data_hpcc.csv"
+FILENAME = "data.csv"
+#FILENAME = "data_hpcc.csv"
 
 def plot_performance_results(filename):
     df = pd.read_csv(filename)
@@ -13,7 +13,7 @@ def plot_performance_results(filename):
     achieved_performance = df['achieved_performance'].astype(np.float32)
 
     plt.scatter(n_values, achieved_performance, label="Achieved Performance", color="red", marker="o")
-    plt.plot(n_values, achieved_performance, color='red', alpha=0.5) 
+    plt.plot(n_values, achieved_performance, color='red', alpha=0.5, markersize=20) 
     #plt.hlines(y=peak_performance[0], xmin=n_values.min(), xmax=n_values.max(), label="Peak Performance", color="blue", linestyles='dashed')
     
 
@@ -21,7 +21,7 @@ def plot_performance_results(filename):
     plt.ylabel("GFLOPS")
     #plt.title("Peak vs. Achieved Performance")
     plt.title("Achieved Performance")
-    plt.legend(loc="center right", fancybox=True, shadow=True)
+    #plt.legend(loc="center right", fancybox=True, shadow=True)
     #plt.savefig('peak_vs_achieved_performance.png', bbox_inches='tight')
     plt.savefig('achieved_performance.png', bbox_inches='tight')
     plt.show()
