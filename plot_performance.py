@@ -14,16 +14,16 @@ def plot_performance_results(filename):
 
     plt.plot(n_values, achieved_performance, label="Achieved Performance", color="red", marker="None")
     plt.plot(n_values, achieved_performance, color='red', alpha=0.5, marker = 'None') 
-    #plt.hlines(y=peak_performance[0], xmin=n_values.min(), xmax=n_values.max(), label="Peak Performance", color="blue", linestyles='dashed')
+    plt.hlines(y=peak_performance[0], xmin=n_values.min(), xmax=n_values.max(), label="Peak Performance", color="blue", linestyles='dashed')
     
 
     plt.xlabel("Matrix Size (N)")
     plt.ylabel("GFLOPS")
-    #plt.title("Peak vs. Achieved Performance")
-    plt.title("Achieved Performance")
-    #plt.legend(loc="center right", fancybox=True, shadow=True)
-    #plt.savefig('peak_vs_achieved_performance.png', bbox_inches='tight')
-    plt.savefig('achieved_performance.png', bbox_inches='tight')
+    plt.title("Peak vs. Achieved Performance")
+    #plt.title("Achieved Performance")
+    plt.legend(loc="center right", fancybox=True, shadow=True)
+    plt.savefig('peak_vs_achieved_performance.png', bbox_inches='tight')
+    #plt.savefig('achieved_performance.png', bbox_inches='tight')
     plt.show()
 
 
