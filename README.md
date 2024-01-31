@@ -88,13 +88,13 @@ In this first part of the project, you will test the performance of the basic ma
 
       ![Local Performance Image](local_system_results/peak_vs_achieved_performance.png)
 
-      ![Local Performance Image](local_system_results/achieved_perf.png)
+      ![Local Performance Image](local_system_results/Achieved_perf.png)
 
       **HPCC dev-amd20**
 
       ![HPCC dev-amd20 Performance Image](hpcc_system_results/peak_vs_achieved_performance.png)
    
-      ![HPCC dev-amd20 Performance Image](hpcc_system_results/achieved_perf_hpcc.png)
+      ![HPCC dev-amd20 Performance Image](hpcc_system_results/Achieved_perf_hpcc.png)
 
 7. How does the measured performance for multiple _N_'s compare to peak? Are there any "features" in your plot? Explain them in the context of the hardware architecture of your system. Include in your write-up a description of your system's architecture (processor, cache, etc.).
 
